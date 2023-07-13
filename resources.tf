@@ -38,7 +38,7 @@ resource "docker_container" "bgg-database" {
 resource "docker_container" "bgg-backend" {
    count = var.backend_instance_count
     name = "${var.app_namespace}-data-backend-${count.index}"
-    image = docker_image.bgg-backend.image.id
+    image = docker_image.bgg-backend.image_id
 
     networks_advanced{
         name = docker_network.bgg-net.id
