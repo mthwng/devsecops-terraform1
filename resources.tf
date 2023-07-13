@@ -18,7 +18,7 @@ resource "docker_volume" "data-vol" {
 ##Spin off a container
 resource "docker_container" "bgg-database" {
     name = "${var.app_namespace}-data-database"
-    image = docker_image.bgg-database.image.id
+    image = docker_image.bgg-database.image_id
 
     networks_advanced {
         name = docker_network.bgg-net.id
@@ -35,7 +35,7 @@ resource "docker_container" "bgg-database" {
     } 
 }
 
-resource "docker_container" "bbg-backend" {
+resource "docker_container" "bgg-backend" {
    count = var.backend_instance_count
     name = "${var.app_namespace}-data-backend-${count.index}"
     image = docker_image.bgg-backend.image.id
@@ -58,7 +58,7 @@ resource "docker_container" "bbg-backend" {
 resource "local_file" "nginx-conf" {
     filename = "nginx.conf"
     content = templatefile("sample.nginx.conf.tftpl", {
-                docker_host = ar.docker_host,
+                docker_host = var.docker_host,
         ports = docker_container.bgg-backend[*].ports[0].external
     })
 }
