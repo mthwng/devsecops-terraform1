@@ -7,7 +7,7 @@ resource "docker_image" "bgg-backend" {
     name = "chukmunnlee/bgg-backend:${var.backend_version}"
 }
 
-resource "docker_network" "bgg-network" {
+resource "docker_network" "bgg-net" {
     name = "${var.app_namespace}-bgg-net"
 }
 
@@ -44,11 +44,11 @@ resource "docker_container" "bbg-backend" {
         name = docker_network.bgg-net.id
     }
 
-    env = {
+    env = [ 
         "BGG_DB_USER=root",
         "BGG_DB_PASSWORD=changeit",
         "BGG_DB_HOST=${docker_container.bgg-database.name}",
-    }
+    ]
 
     ports {
         internal = 3000
@@ -56,7 +56,7 @@ resource "docker_container" "bbg-backend" {
 }
 
 resource "local_file" "nginx-conf" {
-    filename + "nginx.conf"
+    filename = "nginx.conf"
     content = templatefile("sample.nginx.conf.tftpl", {
                 docker_host = ar.docker_host,
         ports = docker_container.bgg-backend[*].ports[0].external
